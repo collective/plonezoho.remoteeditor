@@ -3,6 +3,13 @@
 *.swp
 *.swo
 
+/.installed.cfg
 /bin
+/develop-eggs
+/eggs
 /include
 /lib
+/parts
+/src/plonezoho.remoteeditor.egg-info
+/var
+    

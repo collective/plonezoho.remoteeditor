@@ -5,7 +5,7 @@ version = '0.1'
 setup(name='plonezoho.remoteeditor',
       version=version,
       description="Zoho Editor  integratied into Plone",
-      long_description=open("README.txt").read(),
+      long_description=open("README.rst").read(),
       classifiers=[
         "Programming Language :: Python",
         "Framework :: Plone",
