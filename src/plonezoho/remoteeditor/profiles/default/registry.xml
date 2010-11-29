@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<registry>
+    
+    <records
+        interface="plonezoho.remoteeditor.interfaces.IRemoteAPI"
+        prefix="plonezoho.remoteapi">
+        <value key="apikey">5b3f8955bb4a3e90462d165cbe73451b</value>
+        <value key="skey">9fdf3da9267d2b605427c37aaab6254f</value>
+    </records>
+
+</registry>

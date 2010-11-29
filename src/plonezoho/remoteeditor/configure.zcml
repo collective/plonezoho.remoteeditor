@@ -1,0 +1,35 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:gs="http://namespaces.zope.org/genericsetup"
+  xmlns:i18n="http://namespaces.zope.org/i18n"
+  xmlns:browser="http://namespaces.zope.org/browser"
+  i18n_domain="plonezoho.remoteeditor">
+  
+    <include package="plone.app.registry" />
+
+    <!--i18n:registerTranslations directory="locales" /-->
+
+    <browser:page
+        name="remoteeditor"
+        for="*"
+        class=".file.RemoteEditor"
+        allowed_attributes="save"
+        permission="zope2.View"
+        />
+
+    <browser:page
+        name="zoho-remoteeditor-controlpanel"
+        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+        permission="cmf.ManagePortal"
+        class=".controlpanel.RemoteControlPanelView"
+        />
+
+    <gs:registerProfile
+        name="default"
+        title="plonezoho.remoteeditor"
+        directory="profiles/default"
+        description='Install plonezoho.remoteeditor in Plone'
+        provides="Products.GenericSetup.interfaces.EXTENSION"
+        />
+
+</configure>

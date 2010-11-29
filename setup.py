@@ -23,6 +23,7 @@ setup(name='plonezoho.remoteeditor',
       install_requires=[
           'setuptools',
           'zohoapi',
+          'plone.app.registry',
       ],
       entry_points="""
       # -*- Entry points: -*-
