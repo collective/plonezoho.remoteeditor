@@ -13,7 +13,13 @@
         name="remoteeditor"
         for="*"
         class=".file.RemoteEditor"
-        allowed_attributes="save"
+        permission="zope2.View"
+        />
+
+    <browser:page
+        name="remotesave"
+        for="*"
+        class=".file.RemoteSave"
         permission="zope2.View"
         />
 
