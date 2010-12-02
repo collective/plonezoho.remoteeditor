@@ -51,7 +51,7 @@ class RemoteEditor(RemoteBase):
         self.request.response.redirect(url)
         blob_.close()
 
-class RemoteFileView(RemoteBase):
+class RemoteSave(RemoteBase):
 
     def __call__(self):
         if self.documentid != self.request.get('id'):
