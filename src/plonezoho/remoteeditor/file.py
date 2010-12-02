@@ -13,10 +13,21 @@ class RemoteBase(BrowserView):
 
     def __init__(self, context, request):
         super(RemoteEditor, self).__init__(context, request)
-
         registry = getUtility(IRegistry)
         self.apikey =  registry.get('plonezoho.remoteapi.apikey')
         self.skey = registry.get('plonezoho.remoteapi.skey')
+
+    @property
+    def language(self):
+        lang = aq_inner(self.context).Language()
+        if lang:
+            return lang
+        portal_state = self.context.unrestrictedTraverse("@@plone_portal_state")
+        return portal_state.default_language()
+
+    @property
+    def documentid(self):
+        return hashlib.sha224(self.context.UID() + self.apikey).hexdigest(),
 
 
 class RemoteFileView(RemoteBase):
@@ -29,30 +40,22 @@ class RemoteEditor(RemoteBase):
         file_ = self.context.getFile()
         blob_ = file_.getBlob().open()
         url = remote(
+            mode='collabedit',
             apikey=self.apikey,
-            mode='normaledit',
-            documentid=hashlib.sha224(self.context.UID() + self.apikey).hexdigest(),
-            saveurl=self.context.absolute_url()+'/@@remotesave',
+            documentid=self.documentid,
+            lang=self.language,
+            saveurl=self.context.absolute_url()+'/@@remote-save',
             content=blob_,
             filename=file_.filename,
-            lang=self.language(),
             )
         self.request.response.redirect(url)
         blob_.close()
 
-    def language(self):
-        lang = aq_inner(self.context).Language()
-        if lang:
-            return lang
-        portal_state = self.context.unrestrictedTraverse("@@plone_portal_state")
-        return portal_state.default_language()
-
-
-class RemoteSave(RemoteBase):
+class RemoteFileView(RemoteBase):
 
     def __call__(self):
-        doc_id = self.request.get('id')
-        if doc_id != hashlib.sha224(self.context.UID() + self.apikey).hexdigest():
+        if self.documentid != self.request.get('id'):
+            # TODO: how should error be returned
             raise 'saving to wrong place'
         self.context.setFile(self.request.get('content'))
         # FIXME: not returning status correctly
