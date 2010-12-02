@@ -10,17 +10,25 @@
     <!--i18n:registerTranslations directory="locales" /-->
 
     <browser:page
-        name="remoteeditor"
+        name="remote-editor"
         for="*"
         class=".file.RemoteEditor"
         permission="zope2.View"
         />
 
     <browser:page
-        name="remotesave"
+        name="remote-save"
         for="*"
         class=".file.RemoteSave"
         permission="zope2.View"
+        />
+
+    <browser:page
+        name="remote-file_view"
+        for="*"
+        class=".file.RemoteFileView"
+        permission="zope2.View"
+        template="templates/file_view.pt"
         />
 
     <browser:page
