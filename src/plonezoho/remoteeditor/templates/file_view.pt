@@ -21,6 +21,24 @@
                 <pre tal:content="context/get_data|context/data|nothing">
                 </pre>
             </div>
+
+            <div class="plonezoho-remoteeditor-file">
+                <img src="++resource++plonezoho.remoteeditor/zoho_logo.gif" />
+                <ul class="actions">
+                    <li>
+                        <a href="#" target="_blank"
+                            tal:attributes="href string:${context/absolute_url}/remote-editor">
+                            Edit document using Zoho Remote Editor
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" target="_blank"
+                            tal:attributes="href string:${context/absolute_url}/remote-viewer">
+                            View document using Zoho Remote Viewer 
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </metal:block>
     </metal:content-core>
 

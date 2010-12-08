@@ -9,6 +9,11 @@
 
     <!--i18n:registerTranslations directory="locales" /-->
 
+    <browser:resourceDirectory
+        name="plonezoho.remoteeditor"
+        directory="static"
+        />
+
     <browser:page
         name="remote-editor"
         for="*"

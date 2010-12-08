@@ -2,6 +2,7 @@
 import hashlib
 
 from zohoapi import remote
+from zohoapi import remote_status
 from zope.component import getUtility
 from plone.registry.interfaces import IRegistry
 
@@ -12,7 +13,8 @@ from Products.Five.browser import BrowserView
 class RemoteBase(BrowserView):
 
     def __init__(self, context, request):
-        super(RemoteEditor, self).__init__(context, request)
+        super(RemoteBase, self).__init__(context, request)
+        # Registry
         registry = getUtility(IRegistry)
         self.apikey =  registry.get('plonezoho.remoteapi.apikey')
         self.skey = registry.get('plonezoho.remoteapi.skey')
@@ -29,6 +31,16 @@ class RemoteBase(BrowserView):
     def documentid(self):
         return hashlib.sha224(self.context.UID() + self.apikey).hexdigest(),
 
+    @propery
+    def status(self):
+        return self._status()
+
+    @memoize
+    def _status()
+        return remote_status(self.apikey
+
+
+
 
 class RemoteFileView(RemoteBase):
     pass
@@ -39,7 +51,7 @@ class RemoteEditor(RemoteBase):
     def __call__(self):
         file_ = self.context.getFile()
         blob_ = file_.getBlob().open()
-        url = remote(
+        response = remote(
             mode='collabedit',
             apikey=self.apikey,
             documentid=self.documentid,
@@ -48,7 +60,7 @@ class RemoteEditor(RemoteBase):
             content=blob_,
             filename=file_.filename,
             )
-        self.request.response.redirect(url)
+        self.request.response.redirect(response.URL)
         blob_.close()
 
 class RemoteSave(RemoteBase):
