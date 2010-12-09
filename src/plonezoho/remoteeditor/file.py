@@ -1,10 +1,10 @@
 
 import hashlib
 
-from zohoapi import remote
-from zohoapi import remote_status
-from zope.component import getUtility
-from plone.registry.interfaces import IRegistry
+import zohoapi
+import zope.component
+import plone.registry
+import plone.memoize.view
 
 from Acquisition import aq_inner
 from Products.Five.browser import BrowserView
@@ -14,10 +14,11 @@ class RemoteBase(BrowserView):
 
     def __init__(self, context, request):
         super(RemoteBase, self).__init__(context, request)
-        # Registry
-        registry = getUtility(IRegistry)
-        self.apikey =  registry.get('plonezoho.remoteapi.apikey')
-        self.skey = registry.get('plonezoho.remoteapi.skey')
+        registry = zope.component.getUtility(plone.registry.interfaces.IRegistry)
+        self.remoteapi = zohoapi.Remote(
+                registry.get('plonezoho.remoteapi.apikey'),
+                registry.get('plonezoho.remoteapi.skey'),
+                )
 
     @property
     def language(self):
@@ -29,17 +30,27 @@ class RemoteBase(BrowserView):
 
     @property
     def documentid(self):
-        return hashlib.sha224(self.context.UID() + self.apikey).hexdigest(),
+        return 'e2e696359ed3e3bda266dfd07ad3fbccdebf17855dc5f624'
+        # TODO: should also look at annotation
+        return hashlib.sha224(self.context.UID() + self.remoteapi.apikey).hexdigest()
 
-    @propery
+    @property
+    def format(self):
+        return self.context.getFile().filename.split('.')[-1]
+
+    @property
+    def doctype(self):
+        return self.remoteapi.doctype(self.format)
+
+    @property
     def status(self):
         return self._status()
 
-    @memoize
-    def _status()
-        return remote_status(self.apikey
-
-
+    @plone.memoize.view.memoize
+    def _status(self):
+        status = self.remoteapi.status(self.doctype, self.documentid)
+        #import ipdb; ipdb.set_trace()
+        return status
 
 
 class RemoteFileView(RemoteBase):
@@ -51,16 +62,15 @@ class RemoteEditor(RemoteBase):
     def __call__(self):
         file_ = self.context.getFile()
         blob_ = file_.getBlob().open()
-        response = remote(
-            mode='collabedit',
-            apikey=self.apikey,
-            documentid=self.documentid,
-            lang=self.language,
-            saveurl=self.context.absolute_url()+'/@@remote-save',
-            content=blob_,
-            filename=file_.filename,
-            )
-        self.request.response.redirect(response.URL)
+        response = self.remoteapi.collab_edit(
+                documentid=self.documentid,
+                filename=file_.filename,
+                content=blob_,
+                format=self.format,
+                lang=self.language,
+                )
+        import ipdb; ipdb.set_trace()
+        self.request.response.redirect(response.url)
         blob_.close()
 
 class RemoteSave(RemoteBase):

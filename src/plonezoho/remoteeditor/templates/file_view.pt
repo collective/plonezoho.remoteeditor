@@ -24,6 +24,13 @@
 
             <div class="plonezoho-remoteeditor-file">
                 <img src="++resource++plonezoho.remoteeditor/zoho_logo.gif" />
+                <div tal:define="status view/status">
+                    <span>Number of collaborators:</span>
+                    <span tal:condition="python: getattr(status, 'result', True)"
+                          tal:content="status/collaboratorsCount" />
+                    <span tal:condition="python: not getattr(status, 'result', True)">0</span>
+
+                </div>
                 <ul class="actions">
                     <li>
                         <a href="#" target="_blank"
