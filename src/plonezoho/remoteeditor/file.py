@@ -1,6 +1,4 @@
 
-import hashlib
-
 import zohoapi
 import zope.component
 import plone.registry
@@ -60,11 +58,10 @@ class RemoteBase(BrowserView):
         return portal_state.default_language()
 
     def get_docid(self):
+        docid = None
         if self.DOCID in self.annotations.keys():
             docid = self.annotations[self.DOCID]
-            if docid is not None:
-                return docid
-        return self.context.UID()
+        return [self.context.UID(), docid]
     def set_docid(self, value):
         self.annotations[self.DOCID] = value
     documentid = property(get_docid, set_docid)
@@ -79,7 +76,7 @@ class RemoteBase(BrowserView):
 
     @property
     def status(self):
-        if self.documentid is None:
+        if self.documentid[1] is None:
             return None
         return self._status()
 
@@ -90,9 +87,9 @@ class RemoteBase(BrowserView):
         #  - status request was OK,
         #   - nobody is working on document and
         #   - documentid alredady exists
-        if status.get('result', True) and \
-           status.get('collaboratorsCount', 0) == 0 and \
-           self.documentid is not None:
+        if getattr(status, 'result', True) and \
+           getattr(status, 'collaboratorsCount', 0) == 0 and \
+           self.documentid[1] is not None:
             del self.annotations[self.DOCID]
         return status
 
@@ -114,7 +111,10 @@ class RemoteEditor(RemoteBase):
                 username=self.user,
                 documentid=self.documentid,
                 )
-        import ipdb; ipdb.set_trace()
+        if not getattr(response, 'url', None):
+            # TODO: handle errors gracefully
+            raise Exception(str(response))
+        self.documentid = response.documentid
         self.request.response.redirect(response.url)
         blob_.close()
 
@@ -122,8 +122,9 @@ class RemoteEditor(RemoteBase):
 class RemoteSave(RemoteBase):
 
     def __call__(self):
-        if self.documentid != self.request.get('id'):
+        if self.request.get('id', None)[0] != self.documentid[0]:
             # TODO: how should error be returned
-            raise 'saving to wrong place'
-        self.context.setFile(self.request.get('content'))
+            raise Exception('saving to wrong place')
+
         # FIXME: not returning status correctly
+        self.context.setFile(self.request.get('content'))
