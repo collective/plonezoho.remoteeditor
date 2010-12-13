@@ -15,6 +15,13 @@
         />
 
     <browser:page
+        name="remote-viewer"
+        for="*"
+        class=".file.RemoteViewer"
+        permission="zope2.View"
+        />
+
+    <browser:page
         name="remote-editor"
         for="*"
         class=".file.RemoteEditor"
@@ -27,6 +34,7 @@
         class=".file.RemoteSave"
         permission="zope2.View"
         />
+
 
     <browser:page
         name="remote-file_view"

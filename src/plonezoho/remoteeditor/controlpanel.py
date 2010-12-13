@@ -9,6 +9,7 @@ from plonezoho.remoteeditor.interfaces import IRemoteAPI
 class RemoteControlPanelForm(RegistryEditForm):
 
     schema = IRemoteAPI
+    prefix = 'plonezoho.remoteapi'
 
 
 RemoteControlPanelView = wrap_form(

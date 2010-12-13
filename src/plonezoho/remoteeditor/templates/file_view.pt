@@ -22,26 +22,17 @@
                 </pre>
             </div>
 
-            <div class="plonezoho-remoteeditor-file">
-                <img src="++resource++plonezoho.remoteeditor/zoho_logo.gif" />
-
-                <ul class="actions"
+            <div class="plonezoho-remoteeditor-file"
                     tal:define="status view/status">
-                    <li>
-                        <a href="#" target="_blank"
-                            tal:attributes="href string:${context/absolute_url}/remote-editor">Edit</a>
-                        ( <span
-                            tal:condition="python: status is not None and getattr(status, 'result', True)"
-                            tal:content="status/collaboratorsCount"></span>
-                        <span tal:condition="python: not (status is not None and getattr(status, 'result', True))">0</span> )
-                    </li>
-                    <li>
-                        <a href="#" target="_blank"
-                            tal:attributes="href string:${context/absolute_url}/remote-viewer">
-                            View document using Zoho Remote Viewer 
-                        </a>
-                    </li>
-                </ul>
+                <img src="++resource++plonezoho.remoteeditor/zoho_logo.gif" />
+                <a href="#" target="_blank"
+                    tal:attributes="href string:${context/absolute_url}/remote-editor">Edit</a>
+                -
+                <a href="#" target="_blank"
+                    tal:attributes="href string:${context/absolute_url}/remote-viewer">View</a>
+                ( <span tal:condition="python: status is not None and getattr(status, 'result', True)"
+                        tal:content="status/collaboratorsCount"></span>
+                  <span tal:condition="python: not (status is not None and getattr(status, 'result', True))">0</span> )
             </div>
         </metal:block>
     </metal:content-core>

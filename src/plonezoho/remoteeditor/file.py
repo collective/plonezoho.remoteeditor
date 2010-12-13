@@ -93,17 +93,10 @@ class RemoteBase(BrowserView):
             del self.annotations[self.DOCID]
         return status
 
-
-class RemoteFileView(RemoteBase):
-    pass
-
-
-class RemoteEditor(RemoteBase):
-
-    def __call__(self):
+    def collab(self):
         file_ = self.context.getFile()
         blob_ = file_.getBlob().open()
-        response = self.remoteapi.collab_edit(
+        response = self.remoteapi_call(
                 filename=file_.filename,
                 content=blob_,
                 format=self.format,
@@ -118,6 +111,23 @@ class RemoteEditor(RemoteBase):
         self.request.response.redirect(response.url)
         blob_.close()
 
+    @property
+    def remoteapi_call(self):
+        _call = getattr(self, '_remoteapi_call', None)
+        if _call:
+            return getattr(self.remoteapi, _call)
+        raise NotImplemented
+
+
+class RemoteViewer(RemoteBase):
+    _remoteapi_call = 'collab_view'
+    __call__ = RemoteBase.collab
+
+
+class RemoteEditor(RemoteBase):
+    _remoteapi_call = 'collab_edit'
+    __call__ = RemoteBase.collab
+
 
 class RemoteSave(RemoteBase):
 
@@ -128,3 +138,7 @@ class RemoteSave(RemoteBase):
 
         # FIXME: not returning status correctly
         self.context.setFile(self.request.get('content'))
+
+
+class RemoteFileView(RemoteBase):
+    pass
